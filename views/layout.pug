@@ -6,7 +6,8 @@ html(translate="no")
     meta(name='viewport' content='width=device-width, initial-scale=1')
     link(href='/public/app.css' rel='stylesheet')
     link(href='/public/footer.css' rel='stylesheet')
-    link(href='/public/settings.css' rel='stylesheet')
+    link(href='/public/setlists.css' rel='stylesheet')
+    link(href='/public/modal.css' rel='stylesheet')
     link(href='/public/favicon.ico' rel='icon')
 
   body(style=css)
@@ -17,23 +18,63 @@ html(translate="no")
 
     script.
       const timeout = 1600; // 1250 + 250 + 100
+      // Matches the hold animation's delay: releasing a button that has a long
+      // press after this point is a canceled long press and does nothing.
+      const shortPressMaxDuration = 250;
+      const doublePressTimeout = 350;
+
+      // Pages opt in per button, e.g. window.doublePressButtons = ["middle"].
+      // Only those buttons delay their shortPress to wait for a second press.
+      window.doublePressButtons = [];
 
       function addKeyEventHandler(keyCode, button) {
         console.log("Add key event handler: ", keyCode, button);
 
         let pressTimer = undefined;
+        let pressStart = 0;
+        let doublePressTimer = undefined;
+
+        function dispatchShortPress() {
+          if (!window.doublePressButtons.includes(button)) {
+            console.log("[shortPress]", button);
+            dispatchEvent(new CustomEvent('shortPress', { detail: { button }}));
+            return;
+          }
+          if (doublePressTimer != undefined) {
+            clearTimeout(doublePressTimer);
+            doublePressTimer = undefined;
+            let doubleElement = document.querySelector(`.${button} .button.double`);
+            if (doubleElement) {
+              doubleElement.classList.add('active');
+              setTimeout(() => {
+                doubleElement.classList.remove('active');
+              }, 150);
+            }
+            console.log("[doublePress]", button);
+            dispatchEvent(new CustomEvent('doublePress', { detail: { button }}));
+            return;
+          }
+          doublePressTimer = setTimeout(() => {
+            doublePressTimer = undefined;
+            console.log("[shortPress]", button);
+            dispatchEvent(new CustomEvent('shortPress', { detail: { button }}));
+          }, doublePressTimeout);
+        }
         let clickElement = document.querySelector(`.${button} .button.click`);
         let holdElement = document.querySelector(`.${button} .button.hold`);
 
         addEventListener('keydown', (event) => {
           if (event.repeat) { return }
           if (event.keyCode === keyCode) {
+            pressStart = Date.now();
             if (holdElement) {
               holdElement.classList.add('active');
             }
             pressTimer = setTimeout(() => {
               pressTimer = undefined;
-              holdElement.classList.remove('active');
+              if (holdElement) {
+                holdElement.classList.remove('active');
+              }
               console.log("[longPress]", button);
               dispatchEvent(new CustomEvent('longPress', { detail: { button }}));
             }, timeout);
@@ -44,8 +85,13 @@ html(translate="no")
           if (event.keyCode === keyCode) {
             if (pressTimer != undefined) {
               clearTimeout(pressTimer);
+              pressTimer = undefined;
               if (holdElement) {
                 holdElement.classList.remove('active');
+                if (Date.now() - pressStart >= shortPressMaxDuration) {
+                  console.log("[canceled longPress]", button);
+                  return;
+                }
               }
               if (clickElement) {
                 clickElement.classList.add('active');
@@ -53,8 +99,7 @@ html(translate="no")
                   clickElement.classList.remove('active');
                 }, 150);
               }
-              console.log("[shortPress]", button);
-              dispatchEvent(new CustomEvent('shortPress', { detail: { button }}));
+              dispatchShortPress();
             }
           }
         });

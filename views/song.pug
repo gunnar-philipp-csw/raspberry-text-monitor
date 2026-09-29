@@ -13,20 +13,23 @@ block footer
         span.icon.left-click
         .text UP
       if prevSong
-        .button.hold(onclick='prev()')
-          span.icon.left-hold
+        .button.double(onclick='prev()')
+          span.icon.left-click
+          span.double-badge 2×
           .text#prev(title=prevSong.filename) #{prevSong.name}
     .middle
-      .button.click(onclick='setlist()')
+      .button.double(onclick='setlist()')
         span.icon.middle-click
-        .text SETLIST
+        span.double-badge 2×
+        .text BACK
     .right
       .button.click(onclick='scrollDown()')
         span.icon.right-click
         .text DOWN
       if nextSong
-        .button.hold(onclick='next()')
-          span.icon.right-hold
+        .button.double(onclick='next()')
+          span.icon.right-click
+          span.double-badge 2×
           .text#next(title=nextSong.filename) #{nextSong.name}
 
 
@@ -59,24 +62,26 @@ block scripts
     }
 
 
-    addEventListener("shortPress", (e) => {
+    window.doublePressButtons = ["left", "middle", "right"];
+
+    addEventListener("doublePress", (e) => {
       if (e.detail.button == "left") {
-        scrollUp();
+        prev();
       }
       if (e.detail.button == "middle") {
         setlist();
       }
       if (e.detail.button == "right") {
-        scrollDown();
+        next();
       }
     });
 
-    addEventListener("longPress", (e) => {
+    addEventListener("shortPress", (e) => {
       if (e.detail.button == "left") {
-        prev();
+        scrollUp();
       }
       if (e.detail.button == "right") {
-        next();
+        scrollDown();
       }
     });
 

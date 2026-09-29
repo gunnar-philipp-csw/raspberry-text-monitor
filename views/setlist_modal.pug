@@ -1,0 +1,74 @@
+//- Options overlay for the setlist page, opened by long pressing the middle button.
+//- "Add song" switches to the "Add Song" list of every song file in the
+//- setlists directory; an empty setlist opens that list directly.
+//- To add a feature: add an `li(data-action='name')` below and a matching
+//- entry in `modalActions`. See modal.pug for the shared overlay code.
+
+include modal.pug
+
++modal
+  ul(data-set='main')
+    li(data-action='move') Move
+    li(data-action='addSong') Add song
+    li(data-action='addPause') Add pause
+    li(data-action='remove') Remove song
+    li(data-action='cancel') Cancel
+  ul(data-set='library')
+    li(data-action='cancel') Cancel
+    each song in library
+      li(data-action='add', data-source=song.source) #{song.name}
+
+script.
+  // Posts to a setlist API route, then shows the setlist page given by
+  // `target(result)`, e.g. with the new entry highlighted
+  function changeSetlist(url, body, target) {
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((r) => r.json()).then((result) => {
+      if (!result.ok) {
+        throw new Error(result.error);
+      }
+      location.href = target(result);
+    }).catch((err) => {
+      console.error("Changing setlist failed", err);
+      closeModal();
+    });
+  }
+
+  modalActions = {
+    cancel: () => closeModal(),
+    move: () => {
+      closeModal();
+      startMove();
+    },
+    addSong: () => openModal("Add Song", "library"),
+    add: (option) => changeSetlist(
+      "/api/setlist/song/add-from-library",
+      { source: option.getAttribute("data-source") },
+      (result) => "/?song=" + encodeURIComponent(result.filename)),
+    // After the highlighted entry; its position on the page matches
+    // setlist.json, because moves are saved right away
+    addPause: () => changeSetlist(
+      "/api/setlist/pause/add",
+      { after: song },
+      (result) => "/?index=" + result.index),
+    // Removes the highlighted song (or pause); the song stays in "Add song"
+    remove: () => changeSetlist(
+      "/api/setlist/entry/remove",
+      { index: song },
+      (result) => "/?index=" + result.index),
+  };
+
+  function openSetlistModal() {
+    if (moving) {
+      return;
+    }
+    if (total == 0) {
+      openModal("Add Song", "library");
+      return;
+    }
+    let active = document.querySelectorAll("#setlist li")[song];
+    openModal(active.classList.contains("pause") ? "Pause" : active.textContent.trim());
+  }

@@ -1,0 +1,33 @@
+//- Options overlay for the setlists page, opened by long pressing the middle button.
+//- To add a feature: add an `li(data-action='name')` below and a matching
+//- entry in `modalActions`. See modal.pug for the shared overlay code.
+
+include modal.pug
+
++modal
+  ul(data-set='main')
+    li(data-action='create') New setlist
+    li(data-action='duplicate') Duplicate setlist
+    li(data-action='delete') Delete setlist
+    li(data-action='cancel') Cancel
+
+script.
+  // Posts the highlighted setlist to a server route
+  function submitSetlistTo(url) {
+    let form = document.forms["select-setlist"];
+    form.action = url;
+    form.submit();
+  }
+
+  modalActions = {
+    cancel: () => closeModal(),
+    create: () => submitSetlistTo("/setlists/create"),
+    duplicate: () => submitSetlistTo("/setlists/duplicate"),
+    delete: () => submitSetlistTo("/setlists/delete"),
+  };
+
+  function openSetlistsModal() {
+    // Also opens without any setlist, so a first one can be created
+    let label = document.querySelector(`label[for="${setlist}"]`);
+    openModal(label ? label.textContent : "Setlists");
+  }

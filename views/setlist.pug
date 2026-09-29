@@ -3,9 +3,20 @@ extends layout.pug
 block content
   #setlist
     h1 #{setlist.name}
-    each song in setlist.songs
-      li(data-song=song.filename)
-        a(href='/' + song.filename) #{song.name}
+    //- data-index is the entry's position in setlist.json, used to save a new order
+    - var number = 0
+    each song, index in setlist.songs
+      if song.pause
+        li.pause(data-index=index)
+      else
+        - number++
+        li(data-song=song.filename, data-index=index)
+          a(href='/' + song.filename)
+            span.number #{number}.
+            |  #{song.name}
+
+  //- Outside #setlist, so its options aren't taken for songs
+  include setlist_modal.pug
 
 block footer
   footer
@@ -17,9 +28,13 @@ block footer
       .button.click(onclick='select()')
         span.icon.middle-click
         .text SELECT
-      .button.hold(onclick='settings()')
+      .button.hold(onclick='openSetlistModal()')
         span.icon.middle-hold
-        .text SETTINGS
+        .text OPTIONS
+      .button.double(onclick='setlists()')
+        span.icon.middle-click
+        span.double-badge 2×
+        .text BACK
     .right
       .button.click(onclick='next()')
         span.icon.right-click
@@ -32,6 +47,10 @@ block scripts
 
     function selectSong(i) {
       let allSongs = document.querySelectorAll("#setlist li");
+      // A new setlist has no songs yet
+      if (allSongs.length == 0) {
+        return;
+      }
       allSongs.forEach((s) => s.classList.remove("active"));
       allSongs[i].classList.add("active");
       allSongs[i].scrollIntoView({
@@ -41,7 +60,14 @@ block scripts
       });
     }
 
+    // While a song is marked, UP/DOWN move it instead of the highlight
+    var moving = false;
+
     function next() {
+      if (moving) {
+        moveSong(1);
+        return;
+      }
       song++;
       if (song == total) {
         song = 0;
@@ -50,6 +76,10 @@ block scripts
     }
 
     function prev() {
+      if (moving) {
+        moveSong(-1);
+        return;
+      }
       song--;
       if (song == -1) {
         song = total - 1;
@@ -58,19 +88,84 @@ block scripts
     }
 
     function select() {
-      document.querySelector("#setlist li.active a").click();
+      // Pauses have no link
+      let link = document.querySelector("#setlist li.active a");
+      if (link) {
+        link.click();
+      }
     }
 
-    function settings() {
-      location.href = "/settings";
+    // Numbers the songs 1, 2, 3, ... skipping pauses
+    function renumber() {
+      document.querySelectorAll("#setlist li .number").forEach((n, i) => n.textContent = `${i + 1}.`);
+    }
+
+    function setlists() {
+      if (moving) {
+        stopMove().then(() => location.href = "/setlists");
+        return;
+      }
+      location.href = "/setlists";
+    }
+
+    function startMove() {
+      if (total == 0) {
+        return;
+      }
+      moving = true;
+      document.querySelectorAll("#setlist li")[song].classList.add("marked");
+    }
+
+    // Unmarks the song and writes the new order to setlist.json
+    function stopMove() {
+      moving = false;
+      document.querySelectorAll("#setlist li").forEach((s) => s.classList.remove("marked"));
+      let allSongs = Array.from(document.querySelectorAll("#setlist li"));
+      let order = allSongs.map((s) => parseInt(s.getAttribute("data-index")));
+      return fetch("/api/setlist/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order }),
+      }).then((r) => {
+        if (!r.ok) {
+          throw new Error(r.status);
+        }
+        // The file now has the new order
+        allSongs.forEach((s, i) => s.setAttribute("data-index", i));
+      }).catch((err) => {
+        // Show what is actually on disk
+        console.error("Saving setlist order failed", err);
+        location.reload();
+      });
+    }
+
+    function moveSong(direction) {
+      let target = song + direction;
+      if (target < 0 || target >= total) {
+        return;
+      }
+      let allSongs = document.querySelectorAll("#setlist li");
+      let marked = allSongs[song];
+      if (direction < 0) {
+        allSongs[target].before(marked);
+      } else {
+        allSongs[target].after(marked);
+      }
+      renumber();
+      song = target;
+      selectSong(song);
     }
 
     addEventListener("shortPress", (e) => {
+      if (isModalOpen()) {
+        modalShortPress(e.detail.button);
+        return;
+      }
       if (e.detail.button == "left") {
         prev();
       }
       if (e.detail.button == "middle") {
-        select();
+        moving ? stopMove() : select();
       }
       if (e.detail.button == "right") {
         next();
@@ -78,8 +173,23 @@ block scripts
     });
 
     addEventListener("longPress", (e) => {
-      if (e.detail.button == "middle") {
-        settings();
+      if (isModalOpen()) {
+        closeModal();
+      } else if (e.detail.button == "middle") {
+        openSetlistModal();
+      }
+    });
+
+    window.doublePressButtons = ["middle"];
+
+    addEventListener("doublePress", (e) => {
+      if (e.detail.button != "middle") {
+        return;
+      }
+      if (isModalOpen()) {
+        closeModal();
+      } else {
+        setlists();
       }
     });
 
@@ -93,6 +203,12 @@ block scripts
             song = i;
           }
         });
+      }
+
+      // Highlight by position, e.g. a newly added pause (it has no filename)
+      let index = parseInt(urlParams.get('index'));
+      if (index >= 0 && index < total) {
+        song = index;
       }
 
       selectSong(song);
@@ -112,7 +228,11 @@ block socketScript
         };
       }
 
-      const allSongFilenames = Array.from(document.querySelectorAll('#setlist li')).map(li => li.getAttribute('data-song'));
+      // Read from the DOM each time: moving a song changes the order
+      function songFilename(i) {
+        let li = document.querySelectorAll('#setlist li')[i];
+        return li ? li.getAttribute('data-song') : null;
+      }
 
       function emitSetlistState() {
         socket.emit('pi:state', {
@@ -120,7 +240,7 @@ block socketScript
           filename: null,
           songName: null,
           scrollPercent: 0,
-          selectedSong: allSongFilenames[song] || null,
+          selectedSong: songFilename(song),
           ...piScreenState(),
         });
       }
@@ -129,7 +249,7 @@ block socketScript
       const _origSelectSong = selectSong;
       selectSong = function(i) {
         _origSelectSong(i);
-        socket.emit('pi:state', { selectedSong: allSongFilenames[i] || null });
+        socket.emit('pi:state', { selectedSong: songFilename(i) });
       };
 
       emitSetlistState();

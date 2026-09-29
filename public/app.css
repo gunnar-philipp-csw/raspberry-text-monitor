@@ -12,8 +12,9 @@ body {
 }
 
 h1 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: #ccc;
+  margin-bottom: 1rem;
 }
 
 h5 {
@@ -91,6 +92,24 @@ h5 {
 
 #setlist li.active a {
   color: var(--highlight-color);
+}
+
+/* Empty block marking a pause between songs */
+#setlist li.pause {
+  min-height: 1.5em;
+  background-color: transparent;
+  border-style: dotted;
+  border-color: #555;
+}
+
+#setlist li.pause.active {
+  border-color: var(--highlight-color);
+}
+
+/* Song being moved with UP/DOWN */
+#setlist li.marked {
+  border: 2px dashed var(--highlight-color);
+  background-color: #444;
 }
 
 #setlist li a {

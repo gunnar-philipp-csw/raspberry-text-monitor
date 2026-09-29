@@ -921,7 +921,7 @@ async function loadSetlists() {
   const sel = document.getElementById('fp-setlist');
   try {
     let setlists;
-    const r = await fetch('../setlists.json');
+    const r = await fetch('../setlists/setlists.json');
     setlists = await r.json(); // [{ slug, name }]
 
     sel.innerHTML = '';
@@ -946,7 +946,7 @@ async function loadSongList() {
 
   try {
     let songs;
-    const r = await fetch('../' + value + '/setlist.json');
+    const r = await fetch('../setlists/' + value + '/setlist.json');
     const manifest = await r.json();
     songs = manifest.songs; // [{ name, filename }]
 
@@ -966,7 +966,7 @@ async function loadSongList() {
 async function loadSong(setlistValue, song) {
   try {
     let content;
-    const r = await fetch('../' + setlistValue + '/' + song.filename);
+    const r = await fetch('../setlists/' + setlistValue + '/' + song.filename);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     content = await r.text();
     currentSetlistPath = null;

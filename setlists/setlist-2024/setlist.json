@@ -1,5 +1,4 @@
 {
-    "name": "Musikfest 2024",
     "songs": [
         {
             "name": "Celebration",
@@ -38,10 +37,6 @@
             "filename": "im-wagen-vor-mir.md"
         },
         {
-            "name": "Valerie",
-            "filename": "valerie.md"
-        },
-        {
             "name": "Major Tom",
             "filename": "major-tom.md"
         },
@@ -78,8 +73,15 @@
             "filename": "delfin.md"
         },
         {
+            "name": "Valerie",
+            "filename": "valerie.md"
+        },
+        {
             "name": "Bumsbar",
             "filename": "bumsbar.md"
+        },
+        {
+            "pause": true
         },
         {
             "name": "BON JOVI ROCK MIX",
@@ -94,12 +96,11 @@
             "filename": "pur-hit-mix.md"
         },
         {
-            "name": "Ohne dich",
-            "filename": "ohne-dich.md"
+            "pause": true
         },
         {
-            "name": "An Tagen wie diesen",
-            "filename": "an-tagen-wie-diesen.md"
+            "name": "Ohne dich",
+            "filename": "ohne-dich.md"
         },
         {
             "name": "Don't stop believin'",

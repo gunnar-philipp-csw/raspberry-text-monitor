@@ -1,0 +1,44 @@
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-content {
+  width: 80%;
+  padding: 20px;
+  background-color: #222;
+  border: 2px solid var(--highlight-color);
+  text-align: center;
+  /* Long option lists (e.g. "Add Song") scroll inside the overlay */
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#modal-title {
+  margin-bottom: 1rem;
+}
+
+#modal-options ul {
+  padding: 0;
+  margin: 0;
+}
+
+#modal-options li {
+  list-style: none;
+  border: 2px solid black;
+  margin-bottom: 2px;
+  padding: 5px;
+}
+
+#modal-options li.active {
+  border: 2px solid var(--highlight-color);
+}

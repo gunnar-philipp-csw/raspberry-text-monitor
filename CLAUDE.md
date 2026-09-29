@@ -15,7 +15,7 @@ This is a Node.js/Express web app designed to run on a Raspberry Pi as an on-sta
 ### Server ([index.js](index.js))
 
 - Express on port 8080 with Pug templates and Showdown Markdown
-- Scans both local `setlist-*/` directories and USB drives (via `drivelist` + `glob`) for `setlist.json` manifests
+- Scans both local `setlists/setlist-*/` directories and USB drives (via `drivelist` + `glob`) for `setlist.json` manifests
 - Persists the selected setlist via `node-persist`
 - Custom Showdown extensions transform `~refrain~...~/refrain~` and `~bridge~...~/bridge~` tags into colored `<span>` elements, and insert `<br>` after each lyric line
 
@@ -25,25 +25,29 @@ This is a Node.js/Express web app designed to run on a Raspberry Pi as an on-sta
 |-------|---------|
 | `GET /` | Setlist view — lists all songs in selected setlist |
 | `GET /:filename` | Song view — renders a `.md` lyrics file as HTML |
-| `GET /settings` | Settings view — select active setlist |
-| `POST /settings` | Save selected setlist to persistent storage |
+| `GET /setlists` | Setlists view — select active setlist |
+| `POST /setlists` | Save selected setlist to persistent storage |
 
 ### Frontend Button System ([views/layout.pug](views/layout.pug))
 
 All pages share a 3-button footer (left/middle/right). Keyboard keycodes are configurable via env vars (`KEYCODE_LEFT`, `KEYCODE_MIDDLE`, `KEYCODE_RIGHT`). Each button supports:
-- **Short press** (< 1.6s): navigate up/down, select, scroll
-- **Long press** (≥ 1.6s): go to settings, jump to prev/next song
+- **Short press**: navigate up/down, select, scroll. On a button that also has a long press, only releases under 250 ms count; releasing between 250 ms and 1.6 s is a canceled long press and does nothing
+- **Long press** (≥ 1.6s): open the options overlay (shared code in `views/modal.pug`, options per page in `views/setlist_modal.pug` / `views/setlists_modal.pug`). On the setlist page, "Add song" (opened directly on an empty setlist) lists every song file in `setlists/` (`getSongLibrary()`); choosing one copies the file into the active setlist's directory if needed and appends it (`POST /api/setlist/song/add-from-library`). Its "Move" option marks the highlighted song or pause, so UP/DOWN move it and a short press unmarks it and saves the order to `setlist.json` (`POST /api/setlist/order`)
+- **Double press** (opt-in per page via `window.doublePressButtons`): middle = back (song → setlist → setlists page), left/right on the song page = prev/next song
 
 Page-specific logic is injected via Pug `block scripts` and uses `window.shortPressAction` / `window.longPressAction` callbacks.
 
 ### Data Format
 
-**Setlist manifest** (`setlist-*/setlist.json`):
+**Setlist manifest** (`setlists/setlist-*/setlist.json`):
 ```json
-{ "name": "Display Name", "songs": [{ "name": "Song Title", "filename": "song-file.md" }] }
+{ "songs": [{ "name": "Song Title", "filename": "song-file.md" }] }
 ```
+The setlist's display name is its directory name (e.g. `setlist-2026`).
+Songs removed from a setlist ("Remove song" in the setlist page's overlay, `POST /api/setlist/entry/remove`) are moved to `setlists/deleted/<filename>.md`, with their names in `setlists/deleted/songs.json`; they stay in the "Add song" list. Whole deleted setlists live in `setlists/deleted/<setlist>/` and are not in that list.
+An entry `{ "pause": true }` in `songs` is a pause: shown as an empty, unnumbered block on the setlist page and skipped by prev/next song navigation.
 
-**Song lyrics** (`setlist-*/*.md`): Standard Markdown with custom tags:
+**Song lyrics** (`setlists/setlist-*/*.md`): Standard Markdown with custom tags:
 - `~refrain~...~/refrain~` — colored refrain block
 - `~bridge~...~/bridge~` — colored bridge block
 

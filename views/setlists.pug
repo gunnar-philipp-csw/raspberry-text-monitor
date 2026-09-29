@@ -2,15 +2,17 @@ extends layout.pug
 
 block content
   #setlist
-    h1 Settings
+    h1 Setlists
     if error
-      h3.highlight Setlist auswählen:
+      h3.highlight Setlists
 
   form(role='form', method='POST', id='select-setlist')
     each setlist, index in setlists
       div
         input(type='radio', name='setlist', value=index, id=index)
         label(for=index) #{setlist}
+
+  include setlists_modal.pug
 
 block footer
   footer(style="margin-top: 300px;")
@@ -22,9 +24,9 @@ block footer
       .button.click(onclick='select()')
         span.icon.middle-click
         .text SELECT
-      .button.hold(onclick='menu()')
+      .button.hold(onclick='openSetlistsModal()')
         span.icon.middle-hold
-        .text MENU
+        .text OPTIONS
     .right
       .button.click(onclick='next()')
         span.icon.right-click
@@ -35,10 +37,6 @@ block scripts
 
     var setlist = 0;
     var total = #{setlists.length};
-
-    function menu() {
-      location.href = "/";
-    }
 
     function next() {
       setlist++;
@@ -61,6 +59,10 @@ block scripts
     }
 
     addEventListener("shortPress", (e) => {
+      if (isModalOpen()) {
+        modalShortPress(e.detail.button);
+        return;
+      }
       if (e.detail.button == "left") {
         prev();
       }
@@ -73,15 +75,20 @@ block scripts
     });
 
     addEventListener("longPress", (e) => {
-      if (e.detail.button == "middle") {
-        menu();
+      if (isModalOpen()) {
+        closeModal();
+      } else if (e.detail.button == "middle") {
+        openSetlistsModal();
       }
     });
 
     addEventListener("load", (e) => {
       let urlParams = new URLSearchParams(location.search);
       let initialIndex = urlParams.has('selected') ? parseInt(urlParams.get('selected')) : #{selectedIndex};
-      if (initialIndex >= 0) {
+      if (!(initialIndex >= 0 && initialIndex < total)) {
+        initialIndex = 0;
+      }
+      if (total > 0) {
         setlist = initialIndex;
         document.forms["select-setlist"][initialIndex].checked = true;
       }
@@ -93,9 +100,9 @@ block socketScript
       const socket = io();
       socket.emit('identify', { role: 'pi' });
 
-      function emitSettingsState() {
+      function emitSetlistsState() {
         socket.emit('pi:state', {
-          view: 'settings',
+          view: 'setlists',
           filename: null,
           songName: null,
           scrollPercent: 0,
@@ -106,7 +113,7 @@ block socketScript
         });
       }
 
-      emitSettingsState();
+      emitSetlistsState();
 
       const _origNext = next, _origPrev = prev;
       next = function() { _origNext(); socket.emit('pi:state', { selectedIndex: setlist }); };

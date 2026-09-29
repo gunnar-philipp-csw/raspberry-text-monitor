@@ -1,28 +1,15 @@
 {
-    "name": "Kreismusikfest 2025",
     "songs": [
         {
             "name": "Let me entertain you",
             "filename": "let-me-entertain-you.md"
         },
         {
-            "name": "Expresso und Taschianti",
+            "name": "Expresso und Tschianti",
             "filename": "expresso-und-tschianti.md"
         },
         {
-            "name": "Er gehört zu mir",
-            "filename": "er-gehoert-zu-mir.md"
-        },
-        {
-            "name": "Pur Hit Mix",
-            "filename": "pur-hit-mix.md"
-        },
-        {
-            "name": "1000 und eine Nacht",
-            "filename": "1000-und-eine-nacht.md"
-        },
-        {
-            "name": "Schwieberdinger Bier",
+            "name": "Schwieberdinger Biermarsch",
             "filename": "schwieberdinger-bier.md"
         },
         {
@@ -30,55 +17,70 @@
             "filename": "wir-trinken-noch-ein-bier.md"
         },
         {
-            "name": "Knallrotes Gummiboot",
-            "filename": "knallrotes-gummiboot.md"
+            "name": "1000 Mal berührt",
+            "filename": "1000-mal-berührt.md"
         },
         {
-            "name": "DTK Medley",
-            "filename": "dtk-medley.md"
+            "name": "Himmelblaue Augen",
+            "filename": "himmelblaue-augen.md"
         },
         {
-            "name": "Take on me",
-            "filename": "take-on-me.md"
+            "name": "MVS-Schlagermedley",
+            "filename": "mvs-schlagermedley.md"
         },
         {
-            "name": "Let's get loud",
+            "name": "Bella Napoli",
+            "filename": "bella-napoli.md"
+        },
+        {
+            "pause": true
+        },
+        {
+            "name": "Let's get Loud",
             "filename": "lets-get-loud.md"
-        },
-        {
-            "name": "Narcotic",
-            "filename": "narcotic.md"
         },
         {
             "name": "Italo Oldies",
             "filename": "italo-oldies.md"
         },
         {
-            "name": "I wanna dance with somebody",
-            "filename": "i-wanna-dance-with-somebody.md"
+            "name": "Y.M.C.A",
+            "filename": "ymca.md"
         },
         {
-            "name": "Time of my life",
+            "name": "Time of my Life",
             "filename": "time-of-my-life.md"
         },
         {
-            "name": "Y.M.C.A",
-            "filename": "ymca.md"
+            "name": "König von Deutschland",
+            "filename": "koenig-von-deutschland.md"
         },
         {
             "name": "Major Tom",
             "filename": "major-tom.md"
         },
         {
-            "name": "Frozen",
-            "filename": "frozen.md"
+            "name": "I wanna dance with somebody",
+            "filename": "i-wanna-dance-with-somebody.md"
+        },
+        {
+            "name": "Narcotic",
+            "filename": "narcotic.md"
+        },
+        {
+            "name": "Pur Hitmix",
+            "filename": "pur-hit-mix.md"
         },
         {
             "name": "Best of... NENA!",
             "filename": "nena.md"
         },
         {
-            "name": "Kompliment",
+            "name": "Summer of '69",
+            "filename": "summer-of-69.md"
+        },
+        {
+            "name": "Ein Kompliment",
             "filename": "kompliment.md"
         },
         {
@@ -86,15 +88,15 @@
             "filename": "lady-gaga.md"
         },
         {
-            "name": "An Tagen wie diesen",
-            "filename": "an-tagen-wie-diesen.md"
+            "name": "Everytime We Touch",
+            "filename": "everytime-we-touch.md"
         },
         {
-            "name": "Baby one more time",
-            "filename": "baby-one-more-time.md"
+            "name": "Sternenhimmel",
+            "filename": "sternenhimmel.md"
         },
         {
-            "name": "BON JOVI ROCK MIX",
+            "name": "Bon Jovi Rockmix",
             "filename": "bon-jovi-rock-mix.md"
         },
         {
@@ -102,11 +104,11 @@
             "filename": "i-will-survive.md"
         },
         {
-            "name": "Ohne dich",
+            "name": "Ohne Dich",
             "filename": "ohne-dich.md"
         },
         {
-            "name": "Viva la Vida",
+            "name": "Viva La Vida",
             "filename": "viva-la-vida.md"
         },
         {

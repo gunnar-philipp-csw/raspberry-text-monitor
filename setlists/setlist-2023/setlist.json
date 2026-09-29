@@ -1,5 +1,4 @@
 {
-    "name": "Musikfest 2023",
     "songs": [
         {
             "name": "Celebration",
@@ -88,10 +87,6 @@
         {
             "name": "BON JOVI ROCK MIX",
             "filename": "bon-jovi-rock-mix.md"
-        },
-        {
-            "name": "An Tagen wie diesen",
-            "filename": "an-tagen-wie-diesen.md"
         },
         {
             "name": "Don't stop believin'",

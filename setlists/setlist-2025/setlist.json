@@ -1,16 +1,23 @@
 {
-    "name": "Setlist 2026",
     "songs": [
         {
             "name": "Let me entertain you",
             "filename": "let-me-entertain-you.md"
         },
         {
-            "name": "Expresso und Tschianti",
+            "name": "Expresso und Taschianti",
             "filename": "expresso-und-tschianti.md"
         },
         {
-            "name": "Schwieberdinger Biermarsch",
+            "name": "Er gehört zu mir",
+            "filename": "er-gehoert-zu-mir.md"
+        },
+        {
+            "name": "Pur Hit Mix",
+            "filename": "pur-hit-mix.md"
+        },
+        {
+            "name": "Schwieberdinger Bier",
             "filename": "schwieberdinger-bier.md"
         },
         {
@@ -18,23 +25,23 @@
             "filename": "wir-trinken-noch-ein-bier.md"
         },
         {
-            "name": "1000 Mal berührt",
-            "filename": "1000-mal-berührt.md"
+            "name": "Knallrotes Gummiboot",
+            "filename": "knallrotes-gummiboot.md"
         },
         {
-            "name": "Himmelblaue Augen",
-            "filename": "himmelblaue-augen.md"
+            "name": "Narcotic",
+            "filename": "narcotic.md"
         },
         {
-            "name": "MVS-Schlagermedley",
-            "filename": "mvs-schlagermedley.md"
+            "name": "DTK Medley",
+            "filename": "dtk-medley.md"
         },
         {
-            "name": "Bella Napoli",
-            "filename": "bella-napoli.md"
+            "name": "Take on me",
+            "filename": "take-on-me.md"
         },
         {
-            "name": "Let's get Loud",
+            "name": "Let's get loud",
             "filename": "lets-get-loud.md"
         },
         {
@@ -42,43 +49,35 @@
             "filename": "italo-oldies.md"
         },
         {
-            "name": "Y.M.C.A",
-            "filename": "ymca.md"
-        },
-        {
-            "name": "Time of my Life",
-            "filename": "time-of-my-life.md"
-        },
-        {
-            "name": "König von Deutschland",
-            "filename": "koenig-von-deutschland.md"
-        },
-        {
-            "name": "Major Tom",
-            "filename": "major-tom.md"
+            "name": "1000 und eine Nacht",
+            "filename": "1000-und-eine-nacht.md"
         },
         {
             "name": "I wanna dance with somebody",
             "filename": "i-wanna-dance-with-somebody.md"
         },
         {
-            "name": "Narcotic",
-            "filename": "narcotic.md"
+            "name": "Time of my life",
+            "filename": "time-of-my-life.md"
         },
         {
-            "name": "Pur Hitmix",
-            "filename": "pur-hit-mix.md"
+            "name": "Y.M.C.A",
+            "filename": "ymca.md"
+        },
+        {
+            "name": "Major Tom",
+            "filename": "major-tom.md"
+        },
+        {
+            "name": "Frozen",
+            "filename": "frozen.md"
         },
         {
             "name": "Best of... NENA!",
             "filename": "nena.md"
         },
         {
-            "name": "Summer of '69",
-            "filename": "summer-of-69.md"
-        },
-        {
-            "name": "Ein Kompliment",
+            "name": "Kompliment",
             "filename": "kompliment.md"
         },
         {
@@ -86,15 +85,11 @@
             "filename": "lady-gaga.md"
         },
         {
-            "name": "Everytime We Touch",
-            "filename": "everytime-we-touch.md"
+            "name": "Baby one more time",
+            "filename": "baby-one-more-time.md"
         },
         {
-            "name": "Sternenhimmel",
-            "filename": "sternenhimmel.md"
-        },
-        {
-            "name": "Bon Jovi Rockmix",
+            "name": "BON JOVI ROCK MIX",
             "filename": "bon-jovi-rock-mix.md"
         },
         {
@@ -102,11 +97,11 @@
             "filename": "i-will-survive.md"
         },
         {
-            "name": "Ohne Dich",
+            "name": "Ohne dich",
             "filename": "ohne-dich.md"
         },
         {
-            "name": "Viva La Vida",
+            "name": "Viva la Vida",
             "filename": "viva-la-vida.md"
         },
         {

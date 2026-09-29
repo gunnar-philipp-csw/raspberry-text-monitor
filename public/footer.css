@@ -20,6 +20,16 @@ footer .button.click.active {
   background-color: lightblue;
 }
 
+footer .button.double.active {
+  background-color: lightblue;
+}
+
+footer .double-badge {
+  font-weight: bolder;
+  font-size: 22px;
+  margin: 0 4px;
+}
+
 footer .button.hold {
   background: linear-gradient(to left, #222222 50%, lightblue 50%) right;
   background-size: 200%;

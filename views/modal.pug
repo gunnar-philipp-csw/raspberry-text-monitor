@@ -1,0 +1,80 @@
+//- Shared options overlay, styled by public/modal.css.
+//- Usage in a page's modal file:
+//-
+//-   include modal.pug
+//-   +modal
+//-     ul(data-set='main')
+//-       li(data-action='something') Do something
+//-       li(data-action='cancel') Cancel
+//-
+//- and define `modalActions = { something: () => ..., cancel: () => closeModal() }`
+//- in a script. Each `ul(data-set=...)` is one list of options; openModal(title, set)
+//- shows one of them (default "main"), so an action can switch to another list.
+//- UP/DOWN move between options, SELECT runs one (see modalShortPress).
+//- The overlay always opens with "Cancel" highlighted.
+
+mixin modal
+  #modal.modal
+    .modal-content
+      h3#modal-title
+      #modal-options
+        block
+
+  script.
+    var modalOption = 0;
+    var modalActions = {};
+
+    function isModalOpen() {
+      return document.getElementById("modal").classList.contains("open");
+    }
+
+    // Options of the list that is currently shown
+    function modalOptions() {
+      return document.querySelectorAll("#modal-options ul:not([hidden]) li");
+    }
+
+    function selectModalOption(i) {
+      let options = modalOptions();
+      modalOption = (i + options.length) % options.length;
+      options.forEach((o) => o.classList.remove("active"));
+      options[modalOption].classList.add("active");
+      // Long lists scroll inside the overlay
+      options[modalOption].scrollIntoView({ block: "nearest" });
+    }
+
+    // Opens the overlay (or switches it, if already open) to the option
+    // list `set`
+    function openModal(title, set = "main") {
+      document.getElementById("modal-title").textContent = title;
+      document.querySelectorAll("#modal-options ul").forEach((ul) => {
+        ul.hidden = ul.getAttribute("data-set") != set;
+      });
+      document.getElementById("modal").classList.add("open");
+      // Always start on "Cancel" so a stray press can't do anything
+      let options = Array.from(modalOptions());
+      selectModalOption(options.findIndex((o) => o.getAttribute("data-action") == "cancel"));
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.remove("open");
+    }
+
+    // Runs the highlighted option's action, passing its element so the
+    // action can read data-* attributes from it
+    function confirmModalOption() {
+      let option = modalOptions()[modalOption];
+      modalActions[option.getAttribute("data-action")](option);
+    }
+
+    // Handles a short press while the overlay is open
+    function modalShortPress(button) {
+      if (button == "left") {
+        selectModalOption(modalOption - 1);
+      }
+      if (button == "middle") {
+        confirmModalOption();
+      }
+      if (button == "right") {
+        selectModalOption(modalOption + 1);
+      }
+    }
