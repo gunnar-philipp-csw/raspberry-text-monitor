@@ -84,6 +84,36 @@ block scripts
       }
     });
 
+    // Holding UP/DOWN scrolls the lyrics slowly and smoothly until released
+    const holdScrollSpeed = 120; // pixels per second
+    window.repeatButtons = ["left", "right"];
+    var holdScroll = undefined;
+
+    addEventListener("repeatStart", (e) => {
+      let direction = e.detail.button == "left" ? -1 : 1;
+      let container = document.getElementById("container");
+      let last = performance.now();
+      let rest = 0;
+      function step(now) {
+        // Frame-rate independent; keeps sub-pixel remainders so slow speeds
+        // don't stall
+        rest += direction * holdScrollSpeed * (now - last) / 1000;
+        last = now;
+        let pixels = Math.trunc(rest);
+        if (pixels != 0) {
+          container.scrollBy({ top: pixels, behavior: "instant" });
+          rest -= pixels;
+        }
+        holdScroll = requestAnimationFrame(step);
+      }
+      holdScroll = requestAnimationFrame(step);
+    });
+
+    addEventListener("repeatEnd", () => {
+      cancelAnimationFrame(holdScroll);
+      holdScroll = undefined;
+    });
+
 block socketScript
   script.
     if (new URLSearchParams(location.search).has('preview')) { void 0; } else {

@@ -61,7 +61,7 @@ footer .button {
 }
 
 footer .text {
-  font-weight: bolder;
+  font-weight: 700;
   font-size: 22px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -92,7 +92,6 @@ footer .gesture-hold {
   height: 20px;
   border: 3px solid currentColor;
   border-radius: 10px;
-  box-sizing: border-box;
   overflow: hidden;
 }
 

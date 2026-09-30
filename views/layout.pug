@@ -6,7 +6,6 @@ html(translate="no")
     meta(name='viewport' content='width=device-width, initial-scale=1')
     link(href='/public/app.css' rel='stylesheet')
     link(href='/public/footer.css' rel='stylesheet')
-    link(href='/public/setlists.css' rel='stylesheet')
     link(href='/public/modal.css' rel='stylesheet')
     link(href='/public/favicon.ico' rel='icon')
 
@@ -25,7 +24,9 @@ html(translate="no")
 
       // Holding a repeat button fires 'repeatPress' every repeatInterval ms,
       // starting after repeatDelay ms, until it's released (e.g. to scroll
-      // through a list). A hold that repeated fires no shortPress or longPress.
+      // through a list). 'repeatStart' and 'repeatEnd' mark the start and end
+      // of such a hold (e.g. for continuous scrolling). A hold that repeated
+      // fires no shortPress or longPress.
       const repeatDelay = 400;
       const repeatInterval = 150;
 
@@ -42,11 +43,16 @@ html(translate="no")
         let pressStart = 0;
         let doublePressTimer = undefined;
         let repeatTimer = undefined;
+        let repeating = false;
 
         function stopRepeat() {
           clearTimeout(repeatTimer);
           clearInterval(repeatTimer);
           repeatTimer = undefined;
+          if (repeating) {
+            repeating = false;
+            dispatchEvent(new CustomEvent('repeatEnd', { detail: { button }}));
+          }
         }
 
         function startRepeat() {
@@ -54,6 +60,8 @@ html(translate="no")
             // The hold is a scroll now, not a press
             clearTimeout(pressTimer);
             pressTimer = undefined;
+            repeating = true;
+            dispatchEvent(new CustomEvent('repeatStart', { detail: { button }}));
             const fire = () => dispatchEvent(new CustomEvent('repeatPress', { detail: { button }}));
             fire();
             repeatTimer = setInterval(fire, repeatInterval);
