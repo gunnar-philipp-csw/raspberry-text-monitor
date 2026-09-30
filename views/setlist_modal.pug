@@ -44,10 +44,11 @@ script.
       startMove();
     },
     addSong: () => openModal("Add Song", "library"),
+    // After the highlighted entry (at the end of an empty setlist)
     add: (option) => changeSetlist(
       "/api/setlist/song/add-from-library",
-      { source: option.getAttribute("data-source") },
-      (result) => "/?song=" + encodeURIComponent(result.filename)),
+      { source: option.getAttribute("data-source"), after: total > 0 ? song : undefined },
+      (result) => "/?index=" + result.index),
     // After the highlighted entry; its position on the page matches
     // setlist.json, because moves are saved right away
     addPause: () => changeSetlist(

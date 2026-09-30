@@ -33,9 +33,6 @@
             "filename": "bella-napoli.md"
         },
         {
-            "pause": true
-        },
-        {
             "name": "Let's get Loud",
             "filename": "lets-get-loud.md"
         },
@@ -114,6 +111,10 @@
         {
             "name": "Angels",
             "filename": "angels.md"
+        },
+        {
+            "name": "Frozen",
+            "filename": "frozen.md"
         }
     ]
 }

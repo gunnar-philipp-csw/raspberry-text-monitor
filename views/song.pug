@@ -9,28 +9,25 @@ block content
 block footer
   footer(style="margin-top: 300px;")
     .left
-      .button.click(onclick='scrollUp()') 
-        span.icon.left-click
-        .text UP
       if prevSong
         .button.double(onclick='prev()')
-          span.icon.left-click
-          span.double-badge 2×
-          .text#prev(title=prevSong.filename) #{prevSong.name}
+          span.gesture.gesture-double
+          .text#prev(title=prevSong.filename) Prev
+      .button.click(onclick='scrollUp()')
+        .text Up
+        span.arrow.arrow-up
     .middle
       .button.double(onclick='setlist()')
-        span.icon.middle-click
-        span.double-badge 2×
-        .text BACK
+        span.gesture.gesture-double
+        .text Back
     .right
-      .button.click(onclick='scrollDown()')
-        span.icon.right-click
-        .text DOWN
       if nextSong
         .button.double(onclick='next()')
-          span.icon.right-click
-          span.double-badge 2×
-          .text#next(title=nextSong.filename) #{nextSong.name}
+          span.gesture.gesture-double
+          .text#next(title=nextSong.filename) Next
+      .button.click(onclick='scrollDown()')
+        .text Down
+        span.arrow.arrow-down
 
 
 block scripts

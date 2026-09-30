@@ -546,9 +546,11 @@ app.post("/api/setlist/entry/remove", async (req, res) => {
   }
 });
 
-// Adds a song from the song library (see getSongLibrary) to the end of the
-// active setlist. `source` is the song file's path relative to SETLISTS_DIR.
-// The file is copied into the active setlist's directory if it isn't there.
+// Adds a song from the song library (see getSongLibrary) to the active
+// setlist, right after the entry at index `after`, or at the end if `after`
+// is missing or out of range. `source` is the song file's path relative to
+// SETLISTS_DIR. The file is copied into the active setlist's directory if it
+// isn't there. Returns the new entry's index.
 app.post("/api/setlist/song/add-from-library", async (req, res) => {
   try {
     const song = (await getSongLibrary()).find(s => s.source === req.body.source);
@@ -564,9 +566,12 @@ app.post("/api/setlist/song/add-from-library", async (req, res) => {
 
     const raw = fs.readFileSync(setlistPath, "utf-8");
     const setlist = JSON.parse(raw);
-    setlist.songs.push({ name: song.name, filename: song.filename });
+    const { after } = req.body;
+    const valid = Number.isInteger(after) && after >= 0 && after < setlist.songs.length;
+    const index = valid ? after + 1 : setlist.songs.length;
+    setlist.songs.splice(index, 0, { name: song.name, filename: song.filename });
     writeSetlistLike(setlistPath, raw, setlist);
-    res.json({ ok: true, filename: song.filename });
+    res.json({ ok: true, index });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

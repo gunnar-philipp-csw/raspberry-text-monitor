@@ -21,24 +21,22 @@ block content
 block footer
   footer
     .left
-      .button.click(onclick='prev()') 
-        span.icon.left-click
-        .text UP
+      .button.click(onclick='prev()')
+        .text Up
+        span.arrow.arrow-up
     .middle
-      .button.click(onclick='select()')
-        span.icon.middle-click
-        .text SELECT
       .button.hold(onclick='openSetlistModal()')
-        span.icon.middle-hold
-        .text OPTIONS
+        span.gesture.gesture-hold
+        .text Options
       .button.double(onclick='setlists()')
-        span.icon.middle-click
-        span.double-badge 2×
-        .text BACK
+        span.gesture.gesture-double
+        .text Back
+      .button.click(onclick='select()')
+        .text Select
     .right
       .button.click(onclick='next()')
-        span.icon.right-click
-        .text DOWN
+        .text Down
+        span.arrow.arrow-down
 
 block scripts
   script.
@@ -168,6 +166,23 @@ block scripts
         moving ? stopMove() : select();
       }
       if (e.detail.button == "right") {
+        next();
+      }
+    });
+
+    // Holding UP/DOWN scrolls (or keeps moving a marked song), stopping at
+    // the top and bottom of the list
+    window.repeatButtons = ["left", "right"];
+
+    addEventListener("repeatPress", (e) => {
+      if (isModalOpen()) {
+        modalRepeatPress(e.detail.button);
+        return;
+      }
+      if (e.detail.button == "left" && song > 0) {
+        prev();
+      }
+      if (e.detail.button == "right" && song < total - 1) {
         next();
       }
     });

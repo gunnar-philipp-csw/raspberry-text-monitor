@@ -5,134 +5,101 @@ footer {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: end;
+  gap: 8px;
 }
 
-footer .button {
-  background-color: #222222;
-  border: 1px solid lightgray;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-footer .button.click.active {
-  background-color: lightblue;
-}
-
-footer .button.double.active {
-  background-color: lightblue;
-}
-
-footer .double-badge {
-  font-weight: bolder;
-  font-size: 22px;
-  margin: 0 4px;
-}
-
-footer .button.hold {
-  background: linear-gradient(to left, #222222 50%, lightblue 50%) right;
-  background-size: 200%;
-  transition: 0.1s ease-out;
-}
-
-footer .button.hold.active {
-  background-position: left;
-  transition: 1.250s ease-in;
-  transition-delay: .250s;
-}
-
-footer .text {
-  height: 30px;
-  font-weight: bolder;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 250px;
-  display: inline-block;
-}
-
-footer .left .button .text {
-  margin-left: 4px;
-  display: flex;
-  align-items: center;
-}
-
-footer .middle .button .text {
-  margin-top: 4px;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-}
-
-footer .right .button .text {
-  margin-right: 4px;
-  display: flex;
-  align-items: center;
-}
-
-footer .icon {
-  height: 40px;
-  width: 100px; 
-  display: inline-block;
-  background: url('/public/icon_sprite.png');
-  background-size: 100px;
-}
-
-footer .left-click {
-  background-position: 0px 0px;
-
-}
-
-footer .left-hold {
-  background-position: 0px -40px;
-
-}
-
-footer .middle-click {
-  background-position: 0px -80px;
-}
-
-footer .middle-hold {
-  background-position: 0px -120px;
-}
-
-
-footer .right-click {
-  background-position: 0px -160px;
-}
-
-footer .right-hold {
-  background-position: 0px -200px;
-}
-
-footer .left {
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
-  gap: 4px;
-}
-
-footer .middle {
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-}
-
-footer .middle .button {
-  flex-direction: column;
-}
-
-footer .right .button {
-  flex-direction: row-reverse;
-}
-
+/* One group per pedal (left, middle, right). Left and right stack their
+   buttons, with the press action at the bottom, nearest the pedal. The
+   middle pedal has the most actions, so its buttons sit side by side
+   (hold, double press, press) to save vertical space. */
+footer .left,
+footer .middle,
 footer .right {
   display: flex;
   flex-direction: column;
   justify-content: end;
-  gap: 4px;
+  gap: 6px;
+}
+
+footer .middle {
+  flex-direction: row;
+  align-items: end;
+}
+
+footer .button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #222222;
+  border: 1px solid #666;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+footer .text {
+  font-weight: bolder;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Gesture marks, drawn in CSS: two dots = double press, bar = hold (fills
+   while the pedal is held). A plain press has no mark. */
+footer .gesture {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 52px;
+}
+
+footer .gesture-double::before,
+footer .gesture-double::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+footer .gesture-hold {
+  position: relative;
+  width: 52px;
+  height: 20px;
+  border: 3px solid currentColor;
+  border-radius: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+footer .gesture-hold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 0;
+  background-color: var(--highlight-color);
+  transition: width 0.1s ease-out;
+}
+
+/* Matches the long press timing in layout.pug: starts after 250 ms, full at 1.6 s */
+footer .button.hold.active .gesture-hold::after {
+  width: 100%;
+  transition: width 1.25s linear 0.25s;
+}
+
+/* Direction arrows for UP / DOWN */
+footer .arrow {
+  margin-left: auto;
+  font-size: 26px;
+  color: var(--highlight-color);
+}
+
+footer .arrow-up::before {
+  content: "▲";
+}
+
+footer .arrow-down::before {
+  content: "▼";
 }

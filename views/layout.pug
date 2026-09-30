@@ -23,9 +23,17 @@ html(translate="no")
       const shortPressMaxDuration = 250;
       const doublePressTimeout = 350;
 
+      // Holding a repeat button fires 'repeatPress' every repeatInterval ms,
+      // starting after repeatDelay ms, until it's released (e.g. to scroll
+      // through a list). A hold that repeated fires no shortPress or longPress.
+      const repeatDelay = 400;
+      const repeatInterval = 150;
+
       // Pages opt in per button, e.g. window.doublePressButtons = ["middle"].
       // Only those buttons delay their shortPress to wait for a second press.
       window.doublePressButtons = [];
+      // Pages opt in per button, e.g. window.repeatButtons = ["left", "right"]
+      window.repeatButtons = [];
 
       function addKeyEventHandler(keyCode, button) {
         console.log("Add key event handler: ", keyCode, button);
@@ -33,6 +41,24 @@ html(translate="no")
         let pressTimer = undefined;
         let pressStart = 0;
         let doublePressTimer = undefined;
+        let repeatTimer = undefined;
+
+        function stopRepeat() {
+          clearTimeout(repeatTimer);
+          clearInterval(repeatTimer);
+          repeatTimer = undefined;
+        }
+
+        function startRepeat() {
+          repeatTimer = setTimeout(() => {
+            // The hold is a scroll now, not a press
+            clearTimeout(pressTimer);
+            pressTimer = undefined;
+            const fire = () => dispatchEvent(new CustomEvent('repeatPress', { detail: { button }}));
+            fire();
+            repeatTimer = setInterval(fire, repeatInterval);
+          }, repeatDelay);
+        }
 
         function dispatchShortPress() {
           if (!window.doublePressButtons.includes(button)) {
@@ -43,13 +69,6 @@ html(translate="no")
           if (doublePressTimer != undefined) {
             clearTimeout(doublePressTimer);
             doublePressTimer = undefined;
-            let doubleElement = document.querySelector(`.${button} .button.double`);
-            if (doubleElement) {
-              doubleElement.classList.add('active');
-              setTimeout(() => {
-                doubleElement.classList.remove('active');
-              }, 150);
-            }
             console.log("[doublePress]", button);
             dispatchEvent(new CustomEvent('doublePress', { detail: { button }}));
             return;
@@ -60,7 +79,7 @@ html(translate="no")
             dispatchEvent(new CustomEvent('shortPress', { detail: { button }}));
           }, doublePressTimeout);
         }
-        let clickElement = document.querySelector(`.${button} .button.click`);
+        // Only the hold button gets feedback: its bar fills while held
         let holdElement = document.querySelector(`.${button} .button.hold`);
 
         addEventListener('keydown', (event) => {
@@ -78,11 +97,15 @@ html(translate="no")
               console.log("[longPress]", button);
               dispatchEvent(new CustomEvent('longPress', { detail: { button }}));
             }, timeout);
+            if (window.repeatButtons.includes(button)) {
+              startRepeat();
+            }
           }
         });
 
         addEventListener('keyup', (event) => {
           if (event.keyCode === keyCode) {
+            stopRepeat();
             if (pressTimer != undefined) {
               clearTimeout(pressTimer);
               pressTimer = undefined;
@@ -92,12 +115,6 @@ html(translate="no")
                   console.log("[canceled longPress]", button);
                   return;
                 }
-              }
-              if (clickElement) {
-                clickElement.classList.add('active');
-                setTimeout(() => {
-                  clickElement.classList.remove('active');
-                }, 150);
               }
               dispatchShortPress();
             }

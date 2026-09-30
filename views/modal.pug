@@ -66,6 +66,18 @@ mixin modal
       modalActions[option.getAttribute("data-action")](option);
     }
 
+    // Handles a held UP/DOWN while the overlay is open: scrolls through the
+    // options, stopping at the first and last instead of wrapping around
+    function modalRepeatPress(button) {
+      let last = modalOptions().length - 1;
+      if (button == "left" && modalOption > 0) {
+        selectModalOption(modalOption - 1);
+      }
+      if (button == "right" && modalOption < last) {
+        selectModalOption(modalOption + 1);
+      }
+    }
+
     // Handles a short press while the overlay is open
     function modalShortPress(button) {
       if (button == "left") {
