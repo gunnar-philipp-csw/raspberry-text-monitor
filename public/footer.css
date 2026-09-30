@@ -1,12 +1,15 @@
 footer {
   position: fixed;
   bottom: 0;
-  padding: 5px;
+  padding: 10px;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: end;
   gap: 8px;
+  /* Solid, so the list or lyrics don't show through behind the buttons */
+  background-color: var(--bg);
+  border-top: 1px solid var(--surface);
 }
 
 /* One group per pedal (left, middle, right). Left and right stack their
@@ -31,10 +34,9 @@ footer .button {
   display: flex;
   align-items: center;
   gap: 14px;
-  background-color: #222222;
-  border: 1px solid #666;
-  border-radius: 6px;
-  padding: 8px 12px;
+  background-color: var(--surface);
+  border-radius: var(--radius);
+  padding: 10px 16px;
   cursor: pointer;
 }
 

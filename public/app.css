@@ -1,19 +1,33 @@
+/* Shared colors. The highlight color comes from HIGHLIGHT_COLOR
+   (--highlight-color, set on body). Text on it is black for contrast. */
+:root {
+  --bg: #0b0b0b;
+  --surface: #1c1c1e;
+  --surface-raised: #2c2c2e;
+  --text: #f5f5f5;
+  --text-muted: #9a9a9a;
+  --on-highlight: #000;
+  --radius: 12px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-  background-color: #111;
-  color: #eee;
+  background-color: var(--bg);
+  color: var(--text);
   font-size: var(--font-size);
 }
 
 h1 {
   font-size: 2rem;
-  color: #ccc;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
   margin-bottom: 1rem;
 }
 
@@ -76,44 +90,55 @@ h5 {
   text-align: center;
 }
 
+/* List rows: song list (#setlist), setlists (setlists.css) and overlay
+   options (modal.css) share this look. The highlighted row is filled with
+   the highlight color and has black text. */
 #setlist li {
   list-style: none;
   width: 100%;
-  border: 2px solid black;
-  background-color: #222;
-  margin-bottom: 2px;
-  padding: 5px;
+  background-color: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 6px;
+  padding: 12px 16px;
+}
+
+#setlist li a {
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+}
+
+#setlist li .number {
+  display: inline-block;
+  min-width: 2.2em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 #setlist li.active {
-  border: 2px solid var(--highlight-color);
-  color: var(--highlight-color);
+  background-color: var(--highlight-color);
 }
 
-#setlist li.active a {
-  color: var(--highlight-color);
+#setlist li.active a,
+#setlist li.active .number {
+  color: var(--on-highlight);
+  font-weight: 700;
 }
 
 /* Empty block marking a pause between songs */
 #setlist li.pause {
-  min-height: 1.5em;
+  min-height: 1.4em;
   background-color: transparent;
-  border-style: dotted;
-  border-color: #555;
+  border: 2px dashed var(--surface-raised);
 }
 
 #setlist li.pause.active {
+  background-color: var(--highlight-color);
   border-color: var(--highlight-color);
 }
 
-/* Song being moved with UP/DOWN */
+/* Song being moved with UP/DOWN: a ring around the highlighted row */
 #setlist li.marked {
-  border: 2px dashed var(--highlight-color);
-  background-color: #444;
-}
-
-#setlist li a {
-  color: white;
-  text-decoration: none;
-  display: block;
+  outline: 3px dashed var(--highlight-color);
+  outline-offset: 4px;
 }

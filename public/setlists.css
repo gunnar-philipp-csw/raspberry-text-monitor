@@ -1,20 +1,21 @@
 #select-setlist div input {
   appearance: none;
   visibility: hidden;
+  position: absolute;
 }
 
-#select-setlist div input + label{
-  border: 2px solid black;
+/* Same row look as the song list (app.css) */
+#select-setlist div input + label {
+  display: block;
   width: 100%;
-  display: inline-block;
-  background-color: #222;
-  margin-bottom: 2px;
-  padding: 5px;
+  background-color: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 6px;
+  padding: 12px 16px;
 }
 
 #select-setlist div input:checked + label {
-  border: 2px solid var(--highlight-color);
-  background-color: #222;
-  margin-bottom: 2px;
-  padding: 5px;
+  background-color: var(--highlight-color);
+  color: var(--on-highlight);
+  font-weight: 700;
 }
