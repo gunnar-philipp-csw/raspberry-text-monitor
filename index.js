@@ -546,30 +546,33 @@ app.post("/api/setlist/entry/remove", async (req, res) => {
   }
 });
 
-// Adds a song from the song library (see getSongLibrary) to the active
-// setlist, right after the entry at index `after`, or at the end if `after`
-// is missing or out of range. `source` is the song file's path relative to
-// SETLISTS_DIR. The file is copied into the active setlist's directory if it
-// isn't there. Returns the new entry's index.
+// Adds songs from the song library (see getSongLibrary) to the active
+// setlist, in the given order, right after the entry at index `after`, or at
+// the end if `after` is missing or out of range. `sources` are the song
+// files' paths relative to SETLISTS_DIR. Each file is copied into the active
+// setlist's directory if it isn't there. Returns the first new entry's index.
 app.post("/api/setlist/song/add-from-library", async (req, res) => {
   try {
-    const song = (await getSongLibrary()).find(s => s.source === req.body.source);
-    if (!song) {
+    const { sources, after } = req.body;
+    const library = await getSongLibrary();
+    const songs = Array.isArray(sources) ? sources.map(source => library.find(s => s.source === source)) : [];
+    if (songs.length == 0 || songs.some(s => !s)) {
       return res.status(400).json({ error: 'Unknown song' });
     }
 
     const setlistPath = await getSetlistPath();
-    const target = path.join(path.dirname(setlistPath), song.filename);
-    if (!fs.existsSync(target)) {
-      fs.copyFileSync(path.join(SETLISTS_DIR, song.source), target);
+    for (const song of songs) {
+      const target = path.join(path.dirname(setlistPath), song.filename);
+      if (!fs.existsSync(target)) {
+        fs.copyFileSync(path.join(SETLISTS_DIR, song.source), target);
+      }
     }
 
     const raw = fs.readFileSync(setlistPath, "utf-8");
     const setlist = JSON.parse(raw);
-    const { after } = req.body;
     const valid = Number.isInteger(after) && after >= 0 && after < setlist.songs.length;
     const index = valid ? after + 1 : setlist.songs.length;
-    setlist.songs.splice(index, 0, { name: song.name, filename: song.filename });
+    setlist.songs.splice(index, 0, ...songs.map(s => ({ name: s.name, filename: s.filename })));
     writeSetlistLike(setlistPath, raw, setlist);
     res.json({ ok: true, index });
   } catch (error) {

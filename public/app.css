@@ -81,9 +81,13 @@ h5 {
   color: var(--bridge-color);
 }
 
-#setlist {
+/* Song list (setlist page) and setlists list: a small margin left and right,
+   which also leaves room for the ring around a song being moved */
+#setlist,
+#select-setlist {
   width: 100%;
   display: block;
+  padding: 0 16px;
 }
 
 #setlist h1 {

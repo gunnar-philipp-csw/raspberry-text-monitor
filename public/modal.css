@@ -47,3 +47,68 @@
   color: var(--on-highlight);
   font-weight: 700;
 }
+
+/* Checkable options (e.g. songs in "Add Song"): a round checkbox in front,
+   showing a checkmark and the position in the order when checked */
+#modal-options li.checkable {
+  display: flex;
+  align-items: center;
+  /* Room for the order number, which sticks out of the checkbox */
+  gap: 22px;
+}
+
+#modal-options .check {
+  flex: none;
+  position: relative;
+  width: 1.2em;
+  height: 1.2em;
+  border: 3px solid var(--text-muted);
+  border-radius: 50%;
+}
+
+#modal-options li.checked .check {
+  background-color: var(--highlight-color);
+  border-color: var(--highlight-color);
+}
+
+#modal-options li.checked .check::before {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--on-highlight);
+}
+
+/* Position in the order, next to the checkmark */
+#modal-options li.checked .check::after {
+  content: attr(data-order);
+  position: absolute;
+  top: -0.6em;
+  right: -0.9em;
+  min-width: 1.35em;
+  padding: 0 0.25em;
+  border-radius: 0.7em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1.35em;
+  text-align: center;
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+/* On the highlighted row the checkbox inverts, to stay visible */
+#modal-options li.active .check {
+  border-color: var(--on-highlight);
+}
+
+#modal-options li.active.checked .check {
+  background-color: var(--on-highlight);
+}
+
+#modal-options li.active.checked .check::before {
+  color: var(--highlight-color);
+}

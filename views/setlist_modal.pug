@@ -1,6 +1,8 @@
 //- Options overlay for the setlist page, opened by long pressing the middle button.
 //- "Add song" switches to the "Add Song" list of every song file in the
-//- setlists directory; an empty setlist opens that list directly.
+//- setlists directory; an empty setlist opens that list directly. There,
+//- SELECT checks or unchecks a song, and "Add songs" adds the checked songs
+//- in the order they were checked.
 //- To add a feature: add an `li(data-action='name')` below and a matching
 //- entry in `modalActions`. See modal.pug for the shared overlay code.
 
@@ -8,15 +10,18 @@ include modal.pug
 
 +modal
   ul(data-set='main')
-    li(data-action='move') Move
+    li(data-action='move') Move song
     li(data-action='addSong') Add song
     li(data-action='addPause') Add pause
     li(data-action='remove') Remove song
     li(data-action='cancel') Cancel
   ul(data-set='library')
+    li#add-checked(data-action='addChecked') Add songs
     li(data-action='cancel') Cancel
     each song in library
-      li(data-action='add', data-source=song.source) #{song.name}
+      li.checkable(data-action='toggle', data-source=song.source)
+        span.check
+        | #{song.name}
 
 script.
   // Posts to a setlist API route, then shows the setlist page given by
@@ -43,12 +48,19 @@ script.
       closeModal();
       startMove();
     },
-    addSong: () => openModal("Add Song", "library"),
-    // After the highlighted entry (at the end of an empty setlist)
-    add: (option) => changeSetlist(
-      "/api/setlist/song/add-from-library",
-      { source: option.getAttribute("data-source"), after: total > 0 ? song : undefined },
-      (result) => "/?index=" + result.index),
+    addSong: () => openLibrary(),
+    toggle: (option) => toggleChecked(option),
+    // After the highlighted entry (at the end of an empty setlist), in the
+    // order the songs were checked
+    addChecked: () => {
+      if (checkedSources.length == 0) {
+        return;
+      }
+      changeSetlist(
+        "/api/setlist/song/add-from-library",
+        { sources: checkedSources, after: total > 0 ? song : undefined },
+        (result) => "/?index=" + result.index);
+    },
     // After the highlighted entry; its position on the page matches
     // setlist.json, because moves are saved right away
     addPause: () => changeSetlist(
@@ -62,12 +74,44 @@ script.
       (result) => "/?index=" + result.index),
   };
 
+  // Songs checked in the "Add Song" list, in the order they were checked
+  var checkedSources = [];
+
+  function toggleChecked(option) {
+    let source = option.getAttribute("data-source");
+    let i = checkedSources.indexOf(source);
+    if (i >= 0) {
+      checkedSources.splice(i, 1);
+    } else {
+      checkedSources.push(source);
+    }
+    updateChecks();
+  }
+
+  // Shows a checkmark and its position in the order on each checked song
+  function updateChecks() {
+    document.querySelectorAll("#modal-options li.checkable").forEach((li) => {
+      let order = checkedSources.indexOf(li.getAttribute("data-source"));
+      li.classList.toggle("checked", order >= 0);
+      li.querySelector(".check").setAttribute("data-order", order >= 0 ? order + 1 : "");
+    });
+    let count = checkedSources.length;
+    document.getElementById("add-checked").textContent =
+      count == 0 ? "Add songs" : `Add ${count} song${count == 1 ? "" : "s"}`;
+  }
+
+  function openLibrary() {
+    checkedSources = [];
+    updateChecks();
+    openModal("Add Song", "library");
+  }
+
   function openSetlistModal() {
     if (moving) {
       return;
     }
     if (total == 0) {
-      openModal("Add Song", "library");
+      openLibrary();
       return;
     }
     let active = document.querySelectorAll("#setlist li")[song];

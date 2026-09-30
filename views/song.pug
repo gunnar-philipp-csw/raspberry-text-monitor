@@ -7,7 +7,9 @@ block content
 
 
 block footer
-  footer(style="margin-top: 300px;")
+  //- One row of buttons in the bottom right corner, so the lyrics get the
+  //- full height. PREV and NEXT sit on the outer ends.
+  footer.corner
     .left
       if prevSong
         .button.double(onclick='prev()')
@@ -21,13 +23,13 @@ block footer
         span.gesture.gesture-double
         .text Back
     .right
+      .button.click(onclick='scrollDown()')
+        .text Down
+        span.arrow.arrow-down
       if nextSong
         .button.double(onclick='next()')
           span.gesture.gesture-double
           .text#next(title=nextSong.filename) Next
-      .button.click(onclick='scrollDown()')
-        .text Down
-        span.arrow.arrow-down
 
 
 block scripts

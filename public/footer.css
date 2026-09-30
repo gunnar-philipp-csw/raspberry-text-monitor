@@ -30,6 +30,26 @@ footer .middle {
   align-items: end;
 }
 
+/* Song page: a single row of buttons in the bottom right corner instead of
+   a full-width bar, so the lyrics can use the whole screen height.
+   #container's bottom padding (app.css) lets the last lines scroll above it. */
+footer.corner {
+  left: auto;
+  right: 10px;
+  bottom: 10px;
+  width: auto;
+  padding: 8px;
+  border: 1px solid var(--surface-raised);
+  border-radius: 18px;
+  align-items: center;
+}
+
+footer.corner .left,
+footer.corner .right {
+  flex-direction: row;
+  align-items: center;
+}
+
 footer .button {
   display: flex;
   align-items: center;
